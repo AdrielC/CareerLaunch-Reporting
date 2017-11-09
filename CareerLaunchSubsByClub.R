@@ -27,5 +27,19 @@ for(club in ClubNames){
     select(First.Name, Last.Name, Email.Address, Email.Frequency, Students..Major) -> clubReports[[club]]
 }
 
-# I need it for an xlsx writer package
+## For each report in the list, write out a csv based on the name of the dataframe
+lapply(1:length(clubReports), function(i) write.csv(clubReports[[i]], 
+                                                file = paste0(names(clubReports[i]), ".csv"),
+                                                row.names = FALSE))
+
+## Count up all of the rows for each club
+### Initialize an empty dataframe
+clubCount <- data.frame(Club=as.character(NULL), Subscribers=as.numeric(NULL),stringsAsFactors=FALSE)
+### Then fill in the columns of the dataframe
+for(i in 1:length(clubReports)){
+  clubCount[i,"Club"] <- names(clubReports[i])
+  clubCount[i, "Subscribers"] <- nrow(clubReports[[i]])
+}
+### Then write out the final report
+write.csv(clubCount, file = paste0("CLSubscriberCount_",as.Date(Sys.time()), ".csv"), row.names = F)
 
